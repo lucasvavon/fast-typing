@@ -26,7 +26,14 @@ impl Game {
             return InputResult::Error;
         }
 
-
         InputResult::Success
+    }
+
+    pub fn next_word_position(&mut self) -> usize {
+        let current_position: usize = self.input_text.len() - 1;
+        let part = self.sample_text[current_position..].to_string();
+        println!("{}", part);
+        let next_space = part.find(' ').unwrap();
+        current_position + next_space + 1
     }
 }

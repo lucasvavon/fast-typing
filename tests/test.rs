@@ -28,4 +28,25 @@ mod tests {
         let result = game.input('\u{8}');
         assert_eq!(result, InputResult::Nothing)
     }
+
+    #[test]
+    fn check_position_of_next_word() {
+        let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
+        let result = game.next_word_position();
+        assert_eq!(result, 6)
+    }
+
+    #[test]
+    fn check_position_of_next_word_when_not_in_first_word() {
+        let mut game = Game { sample_text: String::from("hello world john doe my friend"), input_text: String::from("hello world john do") };
+        let result = game.next_word_position();
+        assert_eq!(result, 21)
+    }
+
+    /*#[test]
+    fn check_space_on_word_insert_space_to_next_word() {
+        let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
+        //let result = game.input(' ');
+        assert_eq!(game.input_text, String::from("h     "))
+    }*/
 }
