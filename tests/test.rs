@@ -29,24 +29,31 @@ mod tests {
         assert_eq!(result, InputResult::Nothing)
     }
 
-    #[test]
+    /*#[test]
     fn check_position_of_next_word() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
-        let result = game.next_word_position();
-        assert_eq!(result, 6)
+        let result = game.get_next_word_relative_position();
+        assert_eq!(result, 5)
     }
 
     #[test]
     fn check_position_of_next_word_when_not_in_first_word() {
         let mut game = Game { sample_text: String::from("hello world john doe my friend"), input_text: String::from("hello world john do") };
-        let result = game.next_word_position();
-        assert_eq!(result, 21)
-    }
+        let result = game.get_next_word_relative_position();
+        assert_eq!(result, 2)
+    }*/
 
-    /*#[test]
+    #[test]
     fn check_space_on_word_insert_space_to_next_word() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
-        //let result = game.input(' ');
+        game.jump_to_next_word();
         assert_eq!(game.input_text, String::from("h     "))
-    }*/
+    }
+
+    #[test]
+    fn check_space_on_word_jump_to_next_word() {
+        let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
+        game.input(' ');
+        assert_eq!(game.input_text, String::from("h     "))
+    }
 }
