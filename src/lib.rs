@@ -45,26 +45,28 @@ impl Game {
     }
 
     pub fn input(&mut self, input_char: char) -> InputResult {
-        if input_char == '\u{8}' {
+        if input_char == '\x08' || input_char == '\x7f' {
+            // Gestion du caractère backspace
             return self.handle_action(Action::Remove);
         }
 
-        // Get the expected character
-        let expected_char = if let Some(char) = self.sample_text.chars().nth(self.input_text.len()) {
-            char
+        // Obtenir le caractère attendu
+        let expected_char = if let Some(c) = self.sample_text.chars().nth(self.input_text.len()) {
+            c
         } else {
-            return InputResult::Nothing; // No more characters expected
+            return InputResult::Nothing; // Plus de caractères attendus
         };
 
-
-        // Check for space and handle jump
+        // Vérifier si un saut de mot est nécessaire
         if expected_char != ' ' && input_char == ' ' {
             self.handle_action(Action::Jump);
         }
 
-        // Verify the input character matches the expected character
+        // Vérifier si le caractère saisi correspond au caractère attendu
         if input_char != expected_char {
-            return InputResult::Error; // Or include a message with more details
+            // Insérer quand même le caractère incorrect pour maintenir la longueur
+            self.handle_action(Action::Insert(input_char));
+            return InputResult::Error;
         } else {
             self.handle_action(Action::Insert(input_char));
         }
