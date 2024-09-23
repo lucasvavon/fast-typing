@@ -1,6 +1,7 @@
 #[derive(Debug, PartialEq)]
 pub enum InputResult {
     Success,
+    Jump,
     Error,
     Nothing,
 }
@@ -38,8 +39,7 @@ impl Game {
                 InputResult::Success
             }
             Action::Jump => {
-                self.jump_to_next_word();
-                InputResult::Success
+                InputResult::Jump
             }
         }
     }
@@ -57,7 +57,6 @@ impl Game {
             return InputResult::Nothing; // Plus de caractères attendus
         };
 
-        // Vérifier si un saut de mot est nécessaire
         if expected_char != ' ' && input_char == ' ' {
             self.handle_action(Action::Jump);
         }
@@ -81,7 +80,6 @@ impl Game {
         println!("{}", part);
         next_word_pos
     }*/
-
 
     pub fn jump_to_next_word(&mut self) -> usize {
         let current_position: usize = self.input_text.len() - 1;

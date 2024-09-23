@@ -16,20 +16,24 @@ fn main() -> io::Result<()> {
     // Enable raw mode to receive input without pressing Enter
     enable_raw_mode()?;
 
-    println!("-------------------\n| FAST TYPING GAME |\n-------------------");
+    println!("-------------------");
+    println!("| FAST TYPING GAME |");
+    println!("-------------------");
     println!("Type this series of words as quickly as possible : ");
-    println!("{} \n-------------------", rand_text.clone());
+    println!("{}", rand_text.clone());
+    println!("-------------------");
     println!("Let's go : ");
 
     loop {
         // Check if an event is available
         if event::poll(std::time::Duration::from_millis(100))? {
+            if rand_text.len() == game.input_text.to_string().len() {
+                break;
+            }
             // Read the next event
             match event::read()? {
                 Event::Key(key_event) => {
-                    // Only handle key press events to avoid duplicates
                     if key_event.kind == KeyEventKind::Press {
-                        // Initialiser le chronomètre lors de la première saisie
                         if start_time.is_none() {
                             start_time = Some(Instant::now());
                         }
@@ -40,17 +44,21 @@ fn main() -> io::Result<()> {
 
                                 match result {
                                     InputResult::Success => {
-                                        // Afficher le caractère correctement saisi
                                         stdout()
                                             .execute(PrintStyledContent(c.to_string().reset()))?;
                                     }
                                     InputResult::Error => {
-                                        // Afficher le caractère incorrect en rouge
                                         stdout()
                                             .execute(PrintStyledContent(c.to_string().red()))?;
                                     }
+                                    InputResult::Jump => {
+                                        let next_pos = game.jump_to_next_word();
+                                        let dashes: String = std::iter::repeat('-').take(next_pos).collect();
+
+                                        stdout()
+                                            .execute(PrintStyledContent(dashes.red()))?;
+                                    }
                                     InputResult::Nothing => {
-                                        // Plus de saisie attendue
                                         break;
                                     }
                                 }
