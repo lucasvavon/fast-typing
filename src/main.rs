@@ -53,7 +53,7 @@ fn main() -> io::Result<()> {
                                     }
                                     InputResult::Jump => {
                                         let next_pos = game.jump_to_next_word();
-                                        let dashes: String = std::iter::repeat('_').take(next_pos).collect();
+                                        let dashes: String = std::iter::repeat("█").take(next_pos).collect();
 
                                         stdout()
                                             .execute(PrintStyledContent(dashes.red()))?;
