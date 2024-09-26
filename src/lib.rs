@@ -58,7 +58,7 @@ impl Game {
         };
 
         if expected_char != ' ' && input_char == ' ' {
-            self.handle_action(Action::Jump);
+            return self.handle_action(Action::Jump);
         }
 
         // Vérifier si le caractère saisi correspond au caractère attendu
@@ -85,7 +85,7 @@ impl Game {
         let current_position: usize = self.input_text.len() - 1;
         let part = self.sample_text[current_position..].to_string();
         let next_word_pos = part.find(' ').unwrap();
-        for _ in 0..next_word_pos {
+        for _i in 0..next_word_pos {
             self.input_text.push(' ');
         }
         next_word_pos

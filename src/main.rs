@@ -25,11 +25,11 @@ fn main() -> io::Result<()> {
     println!("Let's go : ");
 
     loop {
+        if rand_text.len() == game.input_text.to_string().len() {
+            break;
+        }
         // Check if an event is available
         if event::poll(std::time::Duration::from_millis(100))? {
-            if rand_text.len() == game.input_text.to_string().len() {
-                break;
-            }
             // Read the next event
             match event::read()? {
                 Event::Key(key_event) => {
@@ -53,7 +53,7 @@ fn main() -> io::Result<()> {
                                     }
                                     InputResult::Jump => {
                                         let next_pos = game.jump_to_next_word();
-                                        let dashes: String = std::iter::repeat('-').take(next_pos).collect();
+                                        let dashes: String = std::iter::repeat('_').take(next_pos).collect();
 
                                         stdout()
                                             .execute(PrintStyledContent(dashes.red()))?;
