@@ -1,6 +1,7 @@
-use std::io;
-use std::io::Write;
+use std::{fs, io};
+use std::io::{Write};
 use std::io::{stdout};
+use std::path::PathBuf;
 use std::time::Instant;
 use crossterm::{event::{self, Event, KeyCode, KeyEventKind}, terminal::{disable_raw_mode, enable_raw_mode}, ExecutableCommand};
 use crossterm::style::{PrintStyledContent, Stylize};
@@ -9,7 +10,8 @@ use rand::thread_rng;
 use fast_typing::{Game, InputResult};
 
 fn main() -> io::Result<()> {
-    let rand_text = get_rand_text();
+    let lang = std::string::String::from("fr");
+    let rand_text = get_rand_text_from_json(lang);
     let mut game = Game::new(rand_text.clone());
     let mut start_time: Option<Instant> = None;
 
@@ -65,16 +67,11 @@ fn main() -> io::Result<()> {
                                 stdout().flush().unwrap();
                             }
                             KeyCode::Backspace => {
-                                let result = game.input('\x08');
-                                // Déplacer le curseur en arrière et effacer le caractère
+                                game.input('\x08');
                                 stdout().execute(crossterm::cursor::MoveLeft(1))?;
                                 stdout().execute(PrintStyledContent(" ".to_string().reset()))?;
                                 stdout().execute(crossterm::cursor::MoveLeft(1))?;
                                 stdout().flush().unwrap();
-
-                                if let InputResult::Nothing = result {
-                                    // Ne rien faire si aucun caractère à supprimer
-                                }
                             }
                             _ => {}
                         }
@@ -99,25 +96,21 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn get_rand_text() -> String {
-    // A list of some English words
-    let words = vec![
-        "rust", "language", "code", "example", "random", "text", "generation", "function",
-        "words", "crate", "simple", "program", "efficient", "system", "software"
-    ];
+fn get_rand_text_from_json(lang: String) -> String {
+    let file = [lang, String::from("json")].join(".");
+    let data = fs::read_to_string(file).expect("REASON");
+    let mut words: Vec<String> = serde_json::from_str(&data).expect("REASON");
 
-    // Define how many words you want to generate
-    let num_words = 10;
+    if words.len() < 20 {
+        panic!("Not enough words in the list.");
+    }
 
-    // Create a random number generator
+    // Shuffle the words
     let mut rng = thread_rng();
+    words.shuffle(&mut rng);
 
-    // Select random words
-    let random_text: Vec<&str> = words
-        .choose_multiple(&mut rng, num_words)
-        .cloned()
-        .collect();
+    // Get a slice of the first 20 words
+    let sample = &words[..20];
 
-    // Join the random words into a sentence
-    random_text.join(" ")
+    sample.join(" ")
 }
