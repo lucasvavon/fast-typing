@@ -1,7 +1,6 @@
 use std::{fs, io};
 use std::io::{Write};
 use std::io::{stdout};
-use std::path::PathBuf;
 use std::time::Instant;
 use crossterm::{event::{self, Event, KeyCode, KeyEventKind}, terminal::{disable_raw_mode, enable_raw_mode}, ExecutableCommand};
 use crossterm::style::{PrintStyledContent, Stylize};
@@ -10,8 +9,7 @@ use rand::thread_rng;
 use fast_typing::{Game, InputResult};
 
 fn main() -> io::Result<()> {
-    let lang = std::string::String::from("fr");
-    let rand_text = get_rand_text_from_json(lang);
+    let rand_text = get_rand_text_from_json("en");
     let mut game = Game::new(rand_text.clone());
     let mut start_time: Option<Instant> = None;
 
@@ -82,22 +80,24 @@ fn main() -> io::Result<()> {
         }
     }
 
-    // Disable raw mode before exiting
     disable_raw_mode()?;
 
-    // Calculer et afficher le temps écoulé
     if let Some(start) = start_time {
         let duration = start.elapsed();
         println!(
-            "\nFélicitations ! Vous avez terminé le jeu en {:.2} secondes.",
+            "\nCongratulations! You've completed the game in {:.2} seconds.",
             duration.as_secs_f64()
+        );
+        println!(
+            "| Nb errors : {} |",
+            game.count_errors()
         );
     }
     Ok(())
 }
 
-fn get_rand_text_from_json(lang: String) -> String {
-    let file = [lang, String::from("json")].join(".");
+fn get_rand_text_from_json(lang: &str) -> String {
+    let file = [lang, "json"].join(".");
     let data = fs::read_to_string(file).expect("REASON");
     let mut words: Vec<String> = serde_json::from_str(&data).expect("REASON");
 

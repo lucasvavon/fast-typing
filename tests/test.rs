@@ -56,4 +56,11 @@ mod tests {
         game.input(' ');
         assert_eq!(game.input_text, String::from("h     "))
     }
+
+    #[test]
+    fn check_count_error() {
+        let mut game = Game { sample_text: String::from("convierai saquei dénotassirz"), input_text: String::from("convierai saquez dénotassiez") };
+        let errors = game.count_errors();
+        assert_eq!(errors, 2)
+    }
 }

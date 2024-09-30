@@ -83,7 +83,23 @@ impl Game {
         next_word_pos
     }
 
-    /*pub fn set_language(&mut self, s: String) -> String {
+    pub fn count_errors(&mut self) -> usize {
+        // On récupère la longueur minimale entre les deux chaînes
+        let min_len = self.sample_text.len().min(self.input_text.len());
 
-    }*/
+        // On initialise un compteur de différences
+        let mut errors = 0;
+
+        // On compare les caractères des deux chaînes jusqu'à la longueur minimale
+        for (c1, c2) in self.sample_text.chars().zip(self.input_text.chars()) {
+            if c1 != c2 {
+                errors += 1;
+            }
+        }
+
+        // On ajoute la différence de longueur si une chaîne est plus longue que l'autre
+        errors += self.sample_text.len().max(self.input_text.len()) - min_len;
+
+        errors
+    }
 }
