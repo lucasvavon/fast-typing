@@ -44,7 +44,7 @@ mod tests {
     }*/
 
     #[test]
-    fn check_space_on_word_insert_space_to_next_word() {
+    fn check_space_on_word_insert_spaces_to_next_word() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
         game.jump_to_next_word();
         assert_eq!(game.input_text, String::from("h     "))
@@ -53,8 +53,8 @@ mod tests {
     #[test]
     fn check_space_on_word_jump_to_next_word() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
-        game.input(' ');
-        assert_eq!(game.input_text, String::from("h     "))
+        let resutl = game.input(' ');
+        assert_eq!(resutl, InputResult::Jump)
     }
 
     #[test]
