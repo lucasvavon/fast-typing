@@ -47,6 +47,6 @@ mod tests {
     fn check_count_error() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("helli wolfd") };
         let errors = game.count_errors();
-        assert_eq!(errors, 2)
+        assert_eq!(errors, 3)
     }
 }
