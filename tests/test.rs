@@ -39,8 +39,8 @@ mod tests {
     #[test]
     fn check_space_on_word_jump_to_next_word() {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("h") };
-        let resutl = game.input(' ');
-        assert_eq!(resutl, InputResult::Jump)
+        let result = game.input(' ');
+        assert_eq!(result, InputResult::Jump)
     }
 
     #[test]
@@ -48,5 +48,15 @@ mod tests {
         let mut game = Game { sample_text: String::from("hello world"), input_text: String::from("helli wolfd") };
         let errors = game.count_errors();
         assert_eq!(errors, 3)
+    }
+
+    #[test]
+    fn check_backspace_to_previous_position_on_bad_space() {
+        let mut game = Game { sample_text: String::from("hello world qiu str"), input_text: String::from("hello w     ") };
+        let jump_size = game.back_to_previous_position();
+        let mut assert = assert_eq!(game.input_text, String::from("hello w"));
+        assert = assert_eq!(jump_size, 5);
+
+        assert
     }
 }

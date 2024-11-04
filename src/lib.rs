@@ -73,6 +73,7 @@ impl Game {
         InputResult::Success
     }
 
+    /// Jump to next word if you type space at the middle of word.
     pub fn jump_to_next_word(&mut self) -> usize {
         let current_position: usize = self.input_text.len() - 1;
         let part = self.sample_text[current_position..].to_string();
@@ -81,6 +82,13 @@ impl Game {
             self.input_text.push(' ');
         }
         next_word_pos
+    }
+
+    pub fn back_to_previous_position(&mut self) -> usize{
+        let jump_size = self.input_text.chars().rev().take_while(|&c| c == ' ').count();
+        self.input_text = self.input_text.trim_end_matches(' ').to_string();
+
+        jump_size
     }
 
     pub fn count_errors(&mut self) -> usize {
