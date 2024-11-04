@@ -6,6 +6,8 @@ use crossterm::{event::{self, Event, KeyCode, KeyEventKind}, terminal::{disable_
 use crossterm::style::{PrintStyledContent, Stylize};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use console::{pad_str, Alignment, Term};
+use terminal_size::{Width};
 use fast_typing::{Game, InputResult};
 
 fn main() -> io::Result<()> {
@@ -16,13 +18,17 @@ fn main() -> io::Result<()> {
     // Enable raw mode to receive input without pressing Enter
     enable_raw_mode()?;
 
-    println!("-------------------");
-    println!("| FAST TYPING GAME |");
-    println!("-------------------");
-    println!("Type this series of words as quickly as possible : ");
-    println!("{}", rand_text.clone());
-    println!("-------------------");
-    println!("Let's go : ");
+    let term = Term::stdout();
+    let (width, height) = Term::size(&term);
+    let width_usize: usize = width.into();
+    let title = pad_str("FAST TYPING GAME", width_usize, Alignment::Center, None);
+
+    println!("{}\n", title);
+    println!();
+    println!("Type this series of words as quickly as possible:");
+    println!("{}\n", rand_text.clone());
+    println!("-------------------\n");
+    println!("Let's go : \n");
 
     loop {
         if rand_text.len() == game.input_text.to_string().len() {
@@ -65,11 +71,24 @@ fn main() -> io::Result<()> {
                                 stdout().flush().unwrap();
                             }
                             KeyCode::Backspace => {
-                                game.input('\x08');
-                                stdout().execute(crossterm::cursor::MoveLeft(1))?;
-                                stdout().execute(PrintStyledContent(" ".to_string().reset()))?;
-                                stdout().execute(crossterm::cursor::MoveLeft(1))?;
-                                stdout().flush().unwrap();
+                                let jump_size = game.back_to_previous_position();
+                                if jump_size > 1 {
+                                    game.input('\x08');
+                                    stdout().execute(crossterm::cursor::MoveLeft(jump_size as u16))?;
+                                    stdout().execute(PrintStyledContent(" ".repeat(jump_size).reset()))?;
+                                    stdout().execute(crossterm::cursor::MoveLeft(jump_size as u16))?;
+                                } else {
+                                    game.input('\x08');
+                                    stdout().execute(crossterm::cursor::MoveLeft(1))?;
+                                    stdout().execute(PrintStyledContent(" ".to_string().reset()))?;
+                                    stdout().execute(crossterm::cursor::MoveLeft(1))?;
+                                }
+
+                                stdout().flush()?;
+                            }
+                            KeyCode::Esc => {
+                                println!("\nGAME OVER\n");
+                                break;
                             }
                             _ => {}
                         }
